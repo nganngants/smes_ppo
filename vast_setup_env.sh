@@ -1,4 +1,5 @@
 #!/bin/bash
+touch ~/.no_auto_tmux
 
 conda env create -f environment.yml
 

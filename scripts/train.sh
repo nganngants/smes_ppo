@@ -1,14 +1,16 @@
 
 """
-python -i smes_ppo/train.py \
+python -u smes_ppo/train.py \
     --dataset_name trl-internal-testing/descriptiveness-sentiment-trl-style \
     --dataset_train_split descriptiveness \
     --learning_rate 3e-6 \
-    --output_dir models/minimal/ppo \
+    --output_dir smes_ppo_logs \
     --per_device_train_batch_size 64 \
     --gradient_accumulation_steps 1 \
     --total_episodes 10000 \
-    --model_name_or_path Qwen/Qwen2.5-0.5B \
+    --model_name_or_path Qwen/Qwen2-0.5B-Instruct \
+    --reward_model_path Qwen/Qwen2-0.5B-Instruct \
+    --sft_model_path Qwen/Qwen2-0.5B-Instruct
     --missing_eos_penalty 1.0 \
     --use_peft
 

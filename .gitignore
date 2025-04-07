@@ -6,7 +6,7 @@ logs*
 env/
 *.pyc
 __pycache__
-
+wandb/
 .DS_Store
 
 # pycharm
