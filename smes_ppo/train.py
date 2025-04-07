@@ -61,6 +61,7 @@ if __name__ == "__main__":
         training_args.sft_model_path, trust_remote_code=model_args.trust_remote_code
     )
 
+    print(model_args)
     peft_config = get_peft_config(model_args)
     if peft_config is None:
         ref_policy = AutoModelForCausalLM.from_pretrained(
@@ -72,7 +73,8 @@ if __name__ == "__main__":
     ################
     # Dataset
     ################
-    dataset = get_dataset("jsonl_TrainValMerge_fullVidDescHis_10vidDescCurr_RL_max_emotion_max_strategy/test.jsonl")
+    train_dataset = get_dataset("jsonl_TrainValMerge_fullVidDescHis_10vidDescCurr_RL_max_emotion_max_strategy/test.jsonl")
+    eval_dataset = get_dataset("jsonl_TrainValMerge_fullVidDescHis_10vidDescCurr_RL_max_emotion_max_strategy/test.jsonl")
     # dataset = load_dataset(
     #     script_args.dataset_name, name=script_args.dataset_config, split=script_args.dataset_train_split
     # )
@@ -82,10 +84,11 @@ if __name__ == "__main__":
     # train_dataset = dataset.select(range(len(dataset) - eval_samples))
     # eval_dataset = dataset.select(range(len(dataset) - eval_samples, len(dataset)))
     dataset_text_field = "prompt"
-    dataset = dataset.map(apply_chat_template, fn_kwargs={"tokenizer": tokenizer})
+    train_dataset = train_dataset.map(apply_chat_template, fn_kwargs={"tokenizer": tokenizer})
+    eval_dataset = eval_dataset.map(apply_chat_template, fn_kwargs={"tokenizer": tokenizer})
 
     print("after map")
-    print(dataset[0])
+    print(train_dataset[0])
 
     def prepare_dataset(dataset, tokenizer):
         """pre-tokenize the dataset before training; only collate during training"""
@@ -94,7 +97,7 @@ if __name__ == "__main__":
             outputs = tokenizer(
                 element[dataset_text_field],
                 padding=False,
-                max_length=32
+                max_length=1024
             )
             return {"input_ids": outputs["input_ids"]}
 
@@ -108,11 +111,9 @@ if __name__ == "__main__":
     # # Compute that only on the main process for faster data processing.
     # # see: https://github.com/huggingface/trl/pull/1255
     with PartialState().local_main_process_first():
-        train_dataset = prepare_dataset(dataset, tokenizer)
-        # eval_dataset = prepare_dataset(eval_dataset, tokenizer)
-
+        train_dataset = prepare_dataset(train_dataset, tokenizer)
+        eval_dataset = prepare_dataset(eval_dataset, tokenizer)
     
-
     ################
     # Training
     ################
@@ -124,7 +125,7 @@ if __name__ == "__main__":
         reward_model=reward_model,
         value_model=value_model,
         train_dataset=train_dataset,
-        # eval_dataset=eval_dataset,
+        eval_dataset=eval_dataset,
         peft_config=peft_config,
         # deepspeed="scripts/ds_config.json",
     )
