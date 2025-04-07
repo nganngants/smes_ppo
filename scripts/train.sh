@@ -5,14 +5,15 @@ python -u smes_ppo/train.py \
     --dataset_train_split descriptiveness \
     --learning_rate 3e-6 \
     --output_dir smes_ppo_logs \
-    --per_device_train_batch_size 64 \
+    --per_device_train_batch_size 4 \
     --gradient_accumulation_steps 1 \
     --total_episodes 10000 \
     --model_name_or_path Qwen/Qwen2-0.5B-Instruct \
     --reward_model_path Qwen/Qwen2-0.5B-Instruct \
-    --sft_model_path Qwen/Qwen2-0.5B-Instruct
+    --sft_model_path Qwen/Qwen2-0.5B-Instruct \
     --missing_eos_penalty 1.0 \
-    --use_peft
+    --use_peft \
+    --load_in_4bit=True
 
 accelerate launch --config_file examples/accelerate_configs/deepspeed_zero3.yaml \
     examples/scripts/ppo/ppo.py \
