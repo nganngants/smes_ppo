@@ -1,5 +1,6 @@
 """
 Full training:
+export PYTHONPATH=$PYTHONPATH:.
 python reward_training/train.py \
     --model_name_or_path Qwen/Qwen2-0.5B-Instruct \
     --dataset_name trl-lib/ultrafeedback_binarized \
@@ -11,10 +12,10 @@ python reward_training/train.py \
     --logging_steps 25 \
     --eval_strategy steps \
     --eval_steps 50 \
-    --max_length 2048
+    --max_length 512
 
 LoRA:
-python examples/scripts/reward_modeling.py \
+python reward_training/train.py \
     --model_name_or_path Qwen/Qwen2-0.5B-Instruct \
     --dataset_name trl-lib/ultrafeedback_binarized \
     --output_dir Qwen2-0.5B-Reward-LoRA \

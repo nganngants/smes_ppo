@@ -115,3 +115,5 @@ dummy_framework
 checkpoints
 data
 *.jsonl
+
+wandb/

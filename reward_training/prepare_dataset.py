@@ -9,7 +9,6 @@ from tqdm import tqdm
 # Import the dataset module from the correct path
 from smes_ppo.dataset import get_dataset
 
-
 def load_model(model_name):
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     
@@ -89,21 +88,21 @@ def load_reward_data(file_path):
     dataset = dataset.shuffle(seed=42)
     return dataset
 
-if __name__ == "__main__":
-    # Configuration
-    data_path = "jsonl_TrainValMerge_fullVidDescHis_10vidDescCurr_RL_max_emotion_max_strategy/test.jsonl"
-    model_name = "Qwen/Qwen2-7B-Instruct"
-    output_path = "reward_training_data.json"
-    threshold = 0.3  # ROUGE-L score threshold
+# if __name__ == "__main__":
+#     # Configuration
+#     data_path = "jsonl_TrainValMerge_fullVidDescHis_10vidDescCurr_RL_max_emotion_max_strategy/test.jsonl"
+#     model_name = "Qwen/Qwen2-7B-Instruct"
+#     output_path = "reward_training_data.json"
+#     threshold = 0.3  # ROUGE-L score threshold
     
-    # Prepare dataset for reward training
-    reward_data = prepare_dataset_for_reward_training(
-        data_path=data_path,
-        model_name=model_name,
-        threshold=threshold
-    )
+#     # Prepare dataset for reward training
+#     reward_data = prepare_dataset_for_reward_training(
+#         data_path=data_path,
+#         model_name=model_name,
+#         threshold=threshold
+#     )
     
-    # Save reward training data
-    with open(output_path, 'w') as f:
-        json.dump(reward_data, f, indent=2)
-    print(f"Saved reward training data to {output_path}")
+#     # Save reward training data
+#     with open(output_path, 'w') as f:
+#         json.dump(reward_data, f, indent=2)
+#     print(f"Saved reward training data to {output_path}")

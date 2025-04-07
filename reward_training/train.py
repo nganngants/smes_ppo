@@ -61,8 +61,9 @@ if __name__ == "__main__":
     ##############
     # dataset = load_dataset(script_args.dataset_name, name=script_args.dataset_config)
     dataset = load_reward_data("test_reward_data.json")
+    eval_dataset = load_reward_data("test_reward_data.json")
     print(dataset)
-    exit(0)
+
     ##########
     # Training
     ##########
@@ -71,7 +72,7 @@ if __name__ == "__main__":
         processing_class=tokenizer,
         args=training_args,
         train_dataset=dataset,
-        # eval_dataset=dataset[script_args.dataset_test_split] if training_args.eval_strategy != "no" else None,
+        eval_dataset=eval_dataset,
         peft_config=get_peft_config(model_args),
     )
     trainer.train()
