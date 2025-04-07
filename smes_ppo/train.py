@@ -94,6 +94,7 @@ if __name__ == "__main__":
             outputs = tokenizer(
                 element[dataset_text_field],
                 padding=False,
+                max_length=32
             )
             return {"input_ids": outputs["input_ids"]}
 
