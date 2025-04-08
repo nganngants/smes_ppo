@@ -5,6 +5,7 @@ import torch
 from datasets import load_dataset
 from transformers import AutoModelForSequenceClassification, AutoTokenizer, HfArgumentParser
 from reward_training.prepare_dataset import load_reward_data
+import deepspeed
 
 from trl import (
     ModelConfig,
@@ -21,6 +22,11 @@ if __name__ == "__main__":
     parser = HfArgumentParser((ScriptArguments, RewardConfig, ModelConfig))
     script_args, training_args, model_args = parser.parse_args_into_dataclasses()
     training_args.gradient_checkpointing_kwargs = dict(use_reentrant=False)
+
+    deepspeed.init_distributed()
+    local_rank = training_args.local_rank
+    if local_rank != -1:
+        torch.cuda.set_device(local_rank)
 
     ################
     # Model & Tokenizer
@@ -60,8 +66,8 @@ if __name__ == "__main__":
     # Load dataset
     ##############
     # dataset = load_dataset(script_args.dataset_name, name=script_args.dataset_config)
-    dataset = load_reward_data("test_reward_data.json")
-    eval_dataset = load_reward_data("test_reward_data.json")
+    dataset = load_reward_data("reward_data_train_cut.json")
+    eval_dataset = load_reward_data("reward_data_train_cut.json")
     print(dataset)
 
     ##########
