@@ -10,5 +10,6 @@ pip install gdown
 pip install git+https://github.com/huggingface/trl.git
 git config --global user.email "nganngants@gmail.com"
 git config --global user.name "nganngants"
+pip install --upgrade peft
 
 gdown --folder https://drive.google.com/drive/folders/1-CDVZQ-Q0URzvs7VvuzDoAww2XO6OTwm?usp=drive_link

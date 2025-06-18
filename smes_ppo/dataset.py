@@ -103,6 +103,6 @@ def get_dataset(data_path):
     dataset = dataset.shuffle(seed=42)
     return dataset
 
-data_path = 'jsonl_TrainValMerge_fullVidDescHis_10vidDescCurr_RL_max_emotion_max_strategy/test.jsonl'
-dataset = get_dataset(data_path)
-pprint(dataset)
+# data_path = 'jsonl_TrainValMerge_fullVidDescHis_10vidDescCurr_RL_max_emotion_max_strategy/test.jsonl'
+# dataset = get_dataset(data_path)
+# pprint(dataset)
