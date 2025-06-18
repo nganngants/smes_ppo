@@ -29,13 +29,10 @@ def calculate_rouge_score(prediction, reference):
 def prepare_dataset_for_reward_training(data_path, model_name="Qwen/Qwen2-7B-Instruct", threshold=0.3, batch_size=4):
     dataset = get_dataset(data_path)
     
-    # Initialize the model and tokenizer
     model, tokenizer = load_model(model_name)
     
-    # Initialize the reward training dataset
     reward_training_data = []
     
-    # Process the dataset in batches
     for i in tqdm(range(0, len(dataset), batch_size), desc="Processing dataset"):
         batch = dataset[i:i+batch_size]
         
@@ -45,7 +42,6 @@ def prepare_dataset_for_reward_training(data_path, model_name="Qwen/Qwen2-7B-Ins
         inputs = tokenizer(prompts, return_tensors="pt", padding=True, truncation=True, max_length=512)
         inputs = {k: v.to(model.device) for k, v in inputs.items()}
         
-        # Generate model outputs
         with torch.no_grad():
             outputs = model.generate(
                 **inputs,
@@ -60,7 +56,6 @@ def prepare_dataset_for_reward_training(data_path, model_name="Qwen/Qwen2-7B-Ins
         
         batch_ground_truths = []
         for truth in ground_truths:
-            # Extract content from the first message in ground_truths
             batch_ground_truths.append(truth[0]["content"])
         
         # Calculate ROUGE-L scores and prepare data for reward training
@@ -68,7 +63,6 @@ def prepare_dataset_for_reward_training(data_path, model_name="Qwen/Qwen2-7B-Ins
             model_output = decoded_outputs[j]
             reference = batch_ground_truths[j]
             
-            # Calculate ROUGE-L score
             rouge_score = calculate_rouge_score(model_output, reference)
             
             # If the score is below the threshold, add to reward training data
@@ -88,21 +82,18 @@ def load_reward_data(file_path):
     dataset = dataset.shuffle(seed=42)
     return dataset
 
-# if __name__ == "__main__":
-#     # Configuration
-#     data_path = "jsonl_TrainValMerge_fullVidDescHis_10vidDescCurr_RL_max_emotion_max_strategy/test.jsonl"
-#     model_name = "Qwen/Qwen2-7B-Instruct"
-#     output_path = "reward_training_data.json"
-#     threshold = 0.3  # ROUGE-L score threshold
+if __name__ == "__main__":
+    data_path = "../test.jsonl"
+    model_name = "Qwen/Qwen2-7B-Instruct"
+    output_path = "../test_reward_data.json"
+    threshold = 0.3  # ROUGE-L score threshold
     
-#     # Prepare dataset for reward training
-#     reward_data = prepare_dataset_for_reward_training(
-#         data_path=data_path,
-#         model_name=model_name,
-#         threshold=threshold
-#     )
+    reward_data = prepare_dataset_for_reward_training(
+        data_path=data_path,
+        model_name=model_name,
+        threshold=threshold
+    )
     
-#     # Save reward training data
-#     with open(output_path, 'w') as f:
-#         json.dump(reward_data, f, indent=2)
-#     print(f"Saved reward training data to {output_path}")
+    with open(output_path, 'w') as f:
+        json.dump(reward_data, f, indent=2)
+    print(f"Saved reward training data to {output_path}")
